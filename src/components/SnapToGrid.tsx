@@ -1,7 +1,7 @@
 'use client'
 import DraggableBox from '@/components/DraggableBox'
 import DragMonitor from '@/components/DragMonitor'
-import { type Item } from '@/types'
+import { type GridItem } from '@/types'
 import React, { useCallback, useMemo, useState } from 'react'
 import {
   DndContext,
@@ -39,14 +39,14 @@ function clamp(value: number, min: number, max: number) {
 
 const GRID_SIZE = 50
 
-const initialItems: Item[] = [
+const initialItems: GridItem[] = [
   { id: 1, type: 'storage', x: 0, y: 0, width: 2, height: 2 },
   { id: 2, type: 'storage', x: 100, y: 200, width: 1, height: 2 },
   { id: 3, type: 'storage', x: 300, y: 300, width: 4, height: 1 },
 ]
 
 function SnapToGrid() {
-  const [items, setItems] = useState<Item[]>(initialItems)
+  const [items, setItems] = useState<GridItem[]>(initialItems)
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
   const snapToGrid = useMemo(() => createMagnetSnapModifier(GRID_SIZE, GRID_SIZE / 4), [])
   const sensors = useSensors(useSensor(PointerSensor))

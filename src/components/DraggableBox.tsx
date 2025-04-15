@@ -1,10 +1,10 @@
 'use client'
-import { type Item } from '@/types'
+import { type GridItem } from '@/types'
 import { useDraggable } from '@dnd-kit/core'
 import { type CSSProperties } from 'react'
 
 type Props = {
-  item: Item
+  item: GridItem
   isDragging: boolean
 }
 

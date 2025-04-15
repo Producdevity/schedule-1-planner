@@ -4,7 +4,7 @@ interface Placeable {
   id: UniqueIdentifier
 }
 
-export interface Item extends Placeable {
+export interface GridItem extends Placeable {
   x: number
   y: number
   width: number
@@ -12,10 +12,30 @@ export interface Item extends Placeable {
   type: string
 }
 
-export interface CatalogItem {
-  type: string
-  width: number
-  height: number
-  label: string
-  color: string
+type ItemType =
+  | 'grow_tent'
+  | 'packaging_station'
+  | 'packaging_station_mk2'
+  | 'bed'
+  | 'coffee_table'
+  | 'wooden_square_table'
+  | 'metal_square_table'
+  | 'floor_lamp'
+  | 'TV'
+  | 'small_storage_rack'
+  | 'medium_storage_rack'
+  | 'large_storage_rack'
+  | 'display_cabinet'
+  | 'trash_can'
+  | 'pot_sprinkler'
+  | 'mixing_station'
+  | 'soil_pourer'
+
+export type ItemCategory = 'agriculture' | 'furniture' | 'storage' | 'none' | 'agriculture_tool'
+
+export interface Item {
+  type: ItemType
+  category: ItemCategory
+  price: number
+  size: [number, number]
 }
