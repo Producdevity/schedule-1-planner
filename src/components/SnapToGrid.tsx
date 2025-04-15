@@ -40,8 +40,9 @@ function clamp(value: number, min: number, max: number) {
 const GRID_SIZE = 50
 
 const initialItems: Item[] = [
-  { id: 1, type: 'storage', x: 0, y: 0 },
-  { id: 2, type: 'storage', x: 100, y: 200 },
+  { id: 1, type: 'storage', x: 0, y: 0, width: 2, height: 2 },
+  { id: 2, type: 'storage', x: 100, y: 200, width: 1, height: 2 },
+  { id: 3, type: 'storage', x: 300, y: 300, width: 4, height: 1 },
 ]
 
 function SnapToGrid() {
@@ -68,6 +69,7 @@ function SnapToGrid() {
 
         const snappedX = Math.round(clampedX / GRID_SIZE) * GRID_SIZE
         const snappedY = Math.round(clampedY / GRID_SIZE) * GRID_SIZE
+
         return prevItems.map((item) =>
           item.id === activeId ? { ...item, x: snappedX, y: snappedY } : item,
         )

@@ -7,9 +7,9 @@ interface Placeable {
 export interface Item extends Placeable {
   x: number
   y: number
-  width?: number
-  height?: number
-  type?: string
+  width: number
+  height: number
+  type: string
 }
 
 export interface CatalogItem {

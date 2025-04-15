@@ -16,8 +16,8 @@ function DraggableBox(props: Props) {
   })
 
   const style: CSSProperties = {
-    width: GRID_SIZE * 2 - 1,
-    height: GRID_SIZE * 2 - 1,
+    width: GRID_SIZE * props.item.width - 1,
+    height: GRID_SIZE * props.item.height - 1,
     marginTop: 1,
     marginLeft: 1,
     backgroundColor: '#4f46e5',
