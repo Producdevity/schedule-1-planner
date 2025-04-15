@@ -5,7 +5,6 @@ import { type CSSProperties } from 'react'
 
 type Props = {
   item: Item
-  position: { x: number; y: number }
   isDragging: boolean
 }
 
@@ -17,8 +16,8 @@ function DraggableBox(props: Props) {
   })
 
   const style: CSSProperties = {
-    width: GRID_SIZE * 2 - 2,
-    height: GRID_SIZE * 2 - 2,
+    width: GRID_SIZE * 2 - 1,
+    height: GRID_SIZE * 2 - 1,
     marginTop: 1,
     marginLeft: 1,
     backgroundColor: '#4f46e5',
@@ -28,13 +27,12 @@ function DraggableBox(props: Props) {
     justifyContent: 'center',
     borderRadius: 8,
     position: 'absolute',
-    transform: `translate3d(${(transform?.x ?? 0) + props.position.x}px, ${(transform?.y ?? 0) + props.position.y}px, 0)`,
     cursor: 'grab',
+    transform: `translate3d(${(transform?.x ?? 0) + props.item.x}px, ${(transform?.y ?? 0) + props.item.y}px, 0)`,
     boxShadow: props.isDragging ? '0 8px 20px rgba(0, 0, 0, 0.3)' : 'none',
     opacity: props.isDragging ? 0.85 : 1,
     transition: 'box-shadow 120ms, transform 120ms, opacity 120ms',
   }
-  console.log('position', props.position)
 
   return (
     <div ref={setNodeRef} {...listeners} {...attributes} style={style}>

@@ -49,17 +49,12 @@ function SnapToGrid() {
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null)
   const snapToGrid = useMemo(() => createMagnetSnapModifier(GRID_SIZE, GRID_SIZE / 4), [])
   const sensors = useSensors(useSensor(PointerSensor))
-  const [position, setPosition] = useState({ x: 0, y: 0 })
-
   const containerWidth = 600
   const containerHeight = 400
   const itemSize = { width: 100, height: 100 }
 
   const handleDragEnd = useCallback(
     (ev: DragEndEvent) => {
-      // ev.active.id
-      // find the item in the items array
-
       setItems((prevItems) => {
         const activeItem = prevItems.find((item) => item.id === activeId)
 
@@ -73,7 +68,6 @@ function SnapToGrid() {
 
         const snappedX = Math.round(clampedX / GRID_SIZE) * GRID_SIZE
         const snappedY = Math.round(clampedY / GRID_SIZE) * GRID_SIZE
-        setPosition({ x: snappedX, y: snappedY }) // temp
         return prevItems.map((item) =>
           item.id === activeId ? { ...item, x: snappedX, y: snappedY } : item,
         )
@@ -102,12 +96,7 @@ function SnapToGrid() {
             onDragCancel={() => setActiveId(null)}
           />
           {items.map((item) => (
-            <DraggableBox
-              key={item.id}
-              item={item}
-              position={position}
-              isDragging={activeId === item.id}
-            />
+            <DraggableBox key={item.id} item={item} isDragging={activeId === item.id} />
           ))}
         </DndContext>
       </div>
