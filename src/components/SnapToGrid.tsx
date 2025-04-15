@@ -80,7 +80,6 @@ function SnapToGrid() {
 
   return (
     <div className="p-8">
-      <h1>Snap to Grid: {GRID_SIZE}px</h1>
       <div
         className="relative mt-4 overflow-hidden border border-gray-300"
         style={{

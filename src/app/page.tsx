@@ -1,10 +1,9 @@
-import SnapToGrid from '@/components/SnapToGrid'
+import App from '@/components/App'
 
 function Home() {
   return (
     <div className="container">
-      <h1>Schedule I Planner</h1>
-      <SnapToGrid />
+      <App />
     </div>
   )
 }
