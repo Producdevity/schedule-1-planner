@@ -13,10 +13,26 @@ export interface GridItem extends Placeable {
 }
 
 export type ItemType =
-  | 'bed'
   | 'grow_tent'
+  | 'bed'
   | 'packaging_station'
   | 'packaging_station_mk2'
+  | 'soil'
+  | 'long_life_soil'
+  | 'extra_long_life_soil'
+  | 'og_kush_seed'
+  | 'sour_diesel_seed'
+  | 'green_crack_seed'
+  | 'granddaddy_purple_seed'
+  | 'coca_seed'
+  | 'og_kush'
+  | 'sour_diesel'
+  | 'green_crack'
+  | 'granddaddy_purple'
+  | 'coca'
+  | 'fertilizer'
+  | 'pgr'
+  | 'speed_grow'
   | 'mixing_station'
   | 'mixing_station_mk2'
   | 'small_storage_rack'
@@ -46,9 +62,6 @@ export type ItemType =
   | 'acid'
   | 'phosphorus'
   | 'gasoline'
-  | 'soil'
-  | 'long_life_soil'
-  | 'extra_long_life_soil'
   | 'baggie'
   | 'jar'
   | 'cuke'
@@ -67,11 +80,18 @@ export type ItemType =
   | 'iodine'
   | 'addy'
   | 'horse_semen'
-  | 'og_kush_seed'
-  | 'sour_diesel_seed'
-  | 'green_crack_seed'
-  | 'granddaddy_purple_seed'
-  | 'coca_seed'
+  | 'meth'
+  | 'heroin'
+  | 'cocaine'
+  | 'packaged_weed'
+  | 'packaged_cocaine'
+  | 'brick'
+  | 'water'
+  | 'unprocessed_meth'
+  | 'unprocessed_cocaine'
+  | 'coca_leaf'
+  | 'dried_coca_leaf'
+  | 'pot'
 
 export type ItemBaseCategory = 'production' | 'packaging' | 'ingredients' | 'seeds'
 
@@ -87,9 +107,29 @@ export type ItemCategory =
   | 'tools'
   | 'weed_seeds'
   | 'coca_seeds'
+  | 'drugs'
+  | 'chemicals'
 
 export interface Item {
   type: ItemType
   category: ItemCategory
   price: number
+}
+
+export interface FertilizerEffect {
+  yieldMultiplier: number
+  qualityMultiplier: number
+  timeMultiplier: number
+}
+
+export interface ProductionInput {
+  type: ItemType
+  quantity: number
+  effects?: FertilizerEffect
+}
+
+export interface ProductionOutput {
+  type: ItemType
+  quantity: number
+  quality: number
 }

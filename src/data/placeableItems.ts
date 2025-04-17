@@ -4,6 +4,13 @@ interface PlaceableItem extends Item {
   size: [number, number]
 }
 
+// IMPORTANT NOTE:
+// For seeds we use The grow tent or you can use 3 parts together to grow seeds. 
+// the parts are:
+// 1. pot (plastic_pot, moisture_preserving_pot, air_pot) (impacts water usage, not relevant at this time)
+// 2. suspension rack (has no impact on the process)
+// 3. light (halogen_grow_light, led_grow_light, full_spectrum_grow_light) (impacts time)
+
 const placeableItems: PlaceableItem[] = [
   { type: 'bed', category: 'furniture', price: 150, size: [3, 5] },
   { type: 'coffee_table', category: 'furniture', price: 120, size: [2, 4] },
@@ -23,18 +30,18 @@ const placeableItems: PlaceableItem[] = [
   { type: 'plastic_pot', category: 'agriculture', price: 20, size: [2, 2] },
   { type: 'moisture_preserving_pot', category: 'agriculture', price: 50, size: [2, 2] },
   { type: 'air_pot', category: 'agriculture', price: 120, size: [2, 2] },
-  { type: 'halogen_grow_light', category: 'lights', price: 40, size: [2, 2] },
+  { type: 'halogen_grow_light', category: 'lights', price: 40, size: [2, 2] }, 
   { type: 'led_grow_light', category: 'lights', price: 80, size: [2, 2] },
   { type: 'full_spectrum_grow_light', category: 'lights', price: 200, size: [2, 2] },
-  { type: 'mixing_station', category: 'furniture', price: 500, size: [4, 2] },
-  { type: 'mixing_station_mk2', category: 'furniture', price: 2000, size: [4, 2] },
-  { type: 'packaging_station', category: 'furniture', price: 100, size: [4, 2] },
-  { type: 'packaging_station_mk2', category: 'furniture', price: 750, size: [4, 2] },
-  { type: 'chemistry_station', category: 'furniture', price: 1000, size: [4, 2] },
-  { type: 'lab_oven', category: 'furniture', price: 1000, size: [4, 2] },
-  { type: 'drying_rack', category: 'furniture', price: 250, size: [3, 2] },
-  { type: 'brick_press', category: 'furniture', price: 800, size: [2, 2] },
-  { type: 'cauldron', category: 'none', price: 3000, size: [4, 4] },
+  { type: 'mixing_station', category: 'furniture', price: 500, size: [4, 2] }, // Production
+  { type: 'mixing_station_mk2', category: 'furniture', price: 2000, size: [4, 2] }, // Production
+  { type: 'packaging_station', category: 'furniture', price: 100, size: [4, 2] }, // Packaging
+  { type: 'packaging_station_mk2', category: 'furniture', price: 750, size: [4, 2] }, // Packaging
+  { type: 'chemistry_station', category: 'furniture', price: 1000, size: [4, 2] }, // Production
+  { type: 'lab_oven', category: 'furniture', price: 1000, size: [4, 2] }, // Production
+  { type: 'drying_rack', category: 'furniture', price: 250, size: [3, 2] }, // Production
+  { type: 'brick_press', category: 'furniture', price: 800, size: [2, 2] }, // Production
+  { type: 'cauldron', category: 'none', price: 3000, size: [4, 4] }, // Production
 ]
 
 export default placeableItems
