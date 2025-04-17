@@ -131,14 +131,17 @@ type ProductionChainType = keyof typeof PRODUCTION_CHAINS
 function SimpleCalculator() {
   const [selectedChain, setSelectedChain] = useState<ProductionChainType>('meth')
   const [targetOutput, setTargetOutput] = useState<number>(50)
+  const [customStationCounts, setCustomStationCounts] = useState<Record<ItemType, number>>({} as Record<ItemType, number>)
   const [calculatedRequirements, setCalculatedRequirements] = useState<{
     stations: Record<ItemType, number>
     inputs: Record<ItemType, number>
     efficiencies: StationEfficiency[]
+    actualOutput: number
   }>({
     stations: {} as Record<ItemType, number>,
     inputs: {} as Record<ItemType, number>,
     efficiencies: [],
+    actualOutput: 0,
   })
 
   const calculateRequirements = () => {
@@ -151,6 +154,7 @@ function SimpleCalculator() {
     let currentOutput = targetOutput
     const reversedSteps = [...currentChain.steps].reverse()
 
+    // First pass: calculate required stations and inputs
     reversedSteps.forEach((step: ProductionStep) => {
       // Calculate how many items need to be processed per hour
       const itemsPerHour = (currentOutput * 60) / step.processingTime
@@ -165,31 +169,50 @@ function SimpleCalculator() {
         inputs[input.type] = (inputs[input.type] || 0) + inputQuantity
       })
 
-      // Calculate efficiency metrics
-      const actualStations = Math.ceil(requiredStations)
-      const utilization = (itemsPerHour / (actualStations * (step.parallelProcessing ? 60 : 1))) * 100
-      const timeWasted = (1 - utilization / 100) * 24 * 60 // minutes per day
-      
-      efficiencies.push({
-        station: step.station,
-        required: requiredStations,
-        actual: actualStations,
-        utilization: Math.min(100, utilization),
-        underutilized: utilization < 90,
-        timeWasted: timeWasted,
-      })
-
       // Update current output for next step
       const inputQuantity = Math.ceil((currentOutput * step.inputs[0].quantity) / step.outputs[0].quantity)
       currentOutput = inputQuantity
     })
 
-    setCalculatedRequirements({ stations, inputs, efficiencies })
+    // Second pass: calculate actual output and efficiency based on custom station counts
+    let actualOutput = targetOutput
+    currentChain.steps.forEach((step: ProductionStep) => {
+      const customCount = customStationCounts[step.station] || stations[step.station]
+      const maxItemsPerHour = customCount * (step.parallelProcessing ? 60 : 1)
+      const maxOutputPerHour = (maxItemsPerHour * step.outputs[0].quantity) / step.inputs[0].quantity
+      const maxOutputPerDay = maxOutputPerHour * 24
+
+      // Calculate efficiency metrics
+      const itemsPerHour = (actualOutput * 60) / step.processingTime
+      const utilization = (itemsPerHour / maxItemsPerHour) * 100
+      const timeWasted = (1 - utilization / 100) * 24 * 60 // minutes per day
+      
+      efficiencies.push({
+        station: step.station,
+        required: stations[step.station],
+        actual: customCount,
+        utilization: Math.min(100, utilization),
+        underutilized: utilization < 90,
+        timeWasted: timeWasted,
+      })
+
+      // Update actual output based on station capacity
+      actualOutput = Math.min(actualOutput, maxOutputPerDay)
+    })
+
+    setCalculatedRequirements({ stations, inputs, efficiencies, actualOutput })
+  }
+
+  const handleStationCountChange = (station: ItemType, count: number) => {
+    setCustomStationCounts(prev => ({
+      ...prev,
+      [station]: Math.max(1, count)
+    }))
   }
 
   React.useEffect(() => {
     calculateRequirements()
-  }, [targetOutput, selectedChain])
+  }, [targetOutput, selectedChain, customStationCounts])
 
   return (
     <div className="min-h-screen bg-gray-900 p-8 text-white">
@@ -299,12 +322,35 @@ function SimpleCalculator() {
                       Required: {efficiency.required.toFixed(2)} | Actual: {efficiency.actual}
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="text-lg font-medium">
-                      {efficiency.utilization.toFixed(1)}% Utilization
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => handleStationCountChange(efficiency.station, efficiency.actual - 1)}
+                        className="rounded-md bg-gray-600 px-2 py-1 hover:bg-gray-500"
+                      >
+                        -
+                      </button>
+                      <input
+                        type="number"
+                        value={efficiency.actual}
+                        onChange={(e) => handleStationCountChange(efficiency.station, parseInt(e.target.value) || 1)}
+                        className="w-16 rounded-md border border-gray-600 bg-gray-700 px-2 py-1 text-center"
+                        min="1"
+                      />
+                      <button
+                        onClick={() => handleStationCountChange(efficiency.station, efficiency.actual + 1)}
+                        className="rounded-md bg-gray-600 px-2 py-1 hover:bg-gray-500"
+                      >
+                        +
+                      </button>
                     </div>
-                    <div className="text-sm text-gray-400">
-                      {efficiency.timeWasted.toFixed(0)} min wasted per day
+                    <div className="text-right">
+                      <div className="text-lg font-medium">
+                        {efficiency.utilization.toFixed(1)}% Utilization
+                      </div>
+                      <div className="text-sm text-gray-400">
+                        {efficiency.timeWasted.toFixed(0)} min wasted per day
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -323,6 +369,30 @@ function SimpleCalculator() {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Output Summary */}
+        <div className="mt-8 rounded-lg bg-gray-800 p-6">
+          <h3 className="mb-4 text-xl font-medium">Production Summary</h3>
+          <div className="grid grid-cols-2 gap-8">
+            <div>
+              <h4 className="mb-2 font-medium">Target Output</h4>
+              <div className="text-2xl font-bold">{targetOutput} per day</div>
+            </div>
+            <div>
+              <h4 className="mb-2 font-medium">Actual Output</h4>
+              <div className={`text-2xl font-bold ${
+                calculatedRequirements.actualOutput < targetOutput ? 'text-yellow-400' : 'text-green-400'
+              }`}>
+                {calculatedRequirements.actualOutput.toFixed(1)} per day
+              </div>
+              {calculatedRequirements.actualOutput < targetOutput && (
+                <div className="mt-2 text-sm text-yellow-400">
+                  ⚠️ Current station configuration cannot meet target output
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
