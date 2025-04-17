@@ -24,6 +24,15 @@ interface ProductionChain {
   targetOutput: ItemType
 }
 
+interface StationEfficiency {
+  station: ItemType
+  required: number
+  actual: number
+  utilization: number // percentage
+  underutilized: boolean
+  timeWasted: number // in minutes per day
+}
+
 const PRODUCTION_CHAINS: Record<string, ProductionChain> = {
   meth: {
     name: 'Meth Production',
@@ -125,14 +134,17 @@ function SimpleCalculator() {
   const [calculatedRequirements, setCalculatedRequirements] = useState<{
     stations: Record<ItemType, number>
     inputs: Record<ItemType, number>
+    efficiencies: StationEfficiency[]
   }>({
     stations: {} as Record<ItemType, number>,
     inputs: {} as Record<ItemType, number>,
+    efficiencies: [],
   })
 
   const calculateRequirements = () => {
     const stations: Record<ItemType, number> = {} as Record<ItemType, number>
     const inputs: Record<ItemType, number> = {} as Record<ItemType, number>
+    const efficiencies: StationEfficiency[] = []
     const currentChain = PRODUCTION_CHAINS[selectedChain]
 
     // Calculate backwards from target output
@@ -149,18 +161,30 @@ function SimpleCalculator() {
 
       // Calculate required inputs for this step
       step.inputs.forEach((input: { type: ItemType; quantity: number }) => {
-        // Calculate the input quantity needed for the current output
         const inputQuantity = Math.ceil((currentOutput * input.quantity) / step.outputs[0].quantity)
         inputs[input.type] = (inputs[input.type] || 0) + inputQuantity
       })
 
+      // Calculate efficiency metrics
+      const actualStations = Math.ceil(requiredStations)
+      const utilization = (itemsPerHour / (actualStations * (step.parallelProcessing ? 60 : 1))) * 100
+      const timeWasted = (1 - utilization / 100) * 24 * 60 // minutes per day
+      
+      efficiencies.push({
+        station: step.station,
+        required: requiredStations,
+        actual: actualStations,
+        utilization: Math.min(100, utilization),
+        underutilized: utilization < 90,
+        timeWasted: timeWasted,
+      })
+
       // Update current output for next step
-      // We need to calculate how many inputs we need to produce the current output
       const inputQuantity = Math.ceil((currentOutput * step.inputs[0].quantity) / step.outputs[0].quantity)
       currentOutput = inputQuantity
     })
 
-    setCalculatedRequirements({ stations, inputs })
+    setCalculatedRequirements({ stations, inputs, efficiencies })
   }
 
   React.useEffect(() => {
@@ -260,6 +284,46 @@ function SimpleCalculator() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Efficiency Analysis */}
+        <div className="mt-12 rounded-lg bg-gray-800 p-6">
+          <h3 className="mb-6 text-xl font-medium">Efficiency Analysis</h3>
+          <div className="space-y-4">
+            {calculatedRequirements.efficiencies.map((efficiency) => (
+              <div key={efficiency.station} className="rounded-lg bg-gray-700 p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-lg font-medium">{efficiency.station.replace(/_/g, ' ')}</h4>
+                    <div className="text-sm text-gray-400">
+                      Required: {efficiency.required.toFixed(2)} | Actual: {efficiency.actual}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-medium">
+                      {efficiency.utilization.toFixed(1)}% Utilization
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      {efficiency.timeWasted.toFixed(0)} min wasted per day
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-600">
+                  <div
+                    className={`h-full rounded-full ${
+                      efficiency.underutilized ? 'bg-yellow-500' : 'bg-green-500'
+                    }`}
+                    style={{ width: `${efficiency.utilization}%` }}
+                  />
+                </div>
+                {efficiency.underutilized && (
+                  <div className="mt-2 text-sm text-yellow-400">
+                    ⚠️ This station is underutilized. Consider reducing the number of stations to improve efficiency.
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Summary */}
