@@ -219,208 +219,229 @@ function SimpleCalculator() {
       <div className="mx-auto max-w-7xl">
         <h1 className="mb-8 text-3xl font-bold">Production Calculator</h1>
 
-        {/* Chain Selection */}
-        <div className="mb-8">
-          <label className="mb-2 block text-sm font-medium text-gray-300">
-            Select Production Chain
-          </label>
-          <div className="flex space-x-4">
-            {Object.entries(PRODUCTION_CHAINS).map(([key, chain]) => (
-              <button
-                key={key}
-                onClick={() => setSelectedChain(key as ProductionChainType)}
-                className={`rounded-md px-4 py-2 ${
-                  selectedChain === key
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                {chain.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Target Output */}
-        <div className="mb-8">
-          <label className="mb-2 block text-sm font-medium text-gray-300">
-            Target Output (per day)
-          </label>
-          <input
-            type="number"
-            value={targetOutput}
-            onChange={(e) => setTargetOutput(Number(e.target.value))}
-            className="w-32 rounded-md border border-gray-600 bg-gray-700 px-3 py-2 text-white"
-            min="1"
-          />
-        </div>
-
-        {/* Production Chain Visualization */}
-        <div className="mb-12 space-y-12">
-          {PRODUCTION_CHAINS[selectedChain].steps.map((step, index) => (
-            <div key={step.station} className="flex items-center space-x-8">
-              {/* Station */}
-              <div className="flex flex-col items-center">
-                <div className="relative h-32 w-32 rounded-lg bg-gray-800 p-4">
-                  <Image
-                    src={`/images/stations/${step.station}.png`}
-                    alt={step.station}
-                    fill
-                    className="object-contain"
-                  />
-                </div>
-                <div className="mt-4 text-center">
-                  <div className="text-lg font-medium">{step.station.replace(/_/g, ' ')}</div>
-                  <div className="text-sm text-gray-400">
-                    Required: {calculatedRequirements.stations[step.station] || 0}
-                  </div>
-                </div>
+        <div className="grid grid-cols-2 gap-8">
+          {/* Left Column - Overview */}
+          <div className="space-y-8">
+            {/* Chain Selection */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-300">
+                Select Production Chain
+              </label>
+              <div className="flex space-x-4">
+                {Object.entries(PRODUCTION_CHAINS).map(([key, chain]) => (
+                  <button
+                    key={key}
+                    onClick={() => setSelectedChain(key as ProductionChainType)}
+                    className={`rounded-md px-4 py-2 ${
+                      selectedChain === key
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
+                  >
+                    {chain.name}
+                  </button>
+                ))}
               </div>
+            </div>
 
-              {/* Arrow */}
-              {index < PRODUCTION_CHAINS[selectedChain].steps.length - 1 && (
-                <div className="relative h-0.5 flex-1 bg-gray-600">
-                  <div className="absolute top-1/2 right-0 h-0 w-0 -translate-y-1/2 transform border-t-4 border-r-0 border-b-4 border-l-8 border-gray-600" />
-                </div>
-              )}
+            {/* Target Output */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-300">
+                Target Output (per day)
+              </label>
+              <input
+                type="number"
+                value={targetOutput}
+                onChange={(e) => setTargetOutput(Number(e.target.value))}
+                className="w-32 rounded-md border border-gray-600 bg-gray-700 px-3 py-2 text-white"
+                min="1"
+              />
+            </div>
 
-              {/* Inputs */}
-              <div className="flex space-x-6">
-                {step.inputs.map((input) => (
-                  <div key={input.type} className="flex flex-col items-center">
-                    <div className="relative h-24 w-24 rounded-lg bg-gray-800 p-4">
+            {/* Production Chain Visualization */}
+            <div className="space-y-12">
+              {PRODUCTION_CHAINS[selectedChain].steps.map((step, index) => (
+                <div key={step.station} className="flex items-center space-x-8">
+                  {/* Station */}
+                  <div className="flex flex-col items-center">
+                    <div className="relative h-32 w-32 rounded-lg bg-gray-800 p-4">
                       <Image
-                        src={`/images/inputs/${input.type}.png`}
-                        alt={input.type}
+                        src={`/images/stations/${step.station}.png`}
+                        alt={step.station}
                         fill
                         className="object-contain"
                       />
                     </div>
                     <div className="mt-4 text-center">
-                      <div className="text-sm">{input.type.replace(/_/g, ' ')}</div>
+                      <div className="text-lg font-medium">{step.station.replace(/_/g, ' ')}</div>
                       <div className="text-sm text-gray-400">
-                        {calculatedRequirements.inputs[input.type] || 0} per day
+                        Required: {calculatedRequirements.stations[step.station] || 0}
                       </div>
                     </div>
                   </div>
-                ))}
+
+                  {/* Arrow */}
+                  {index < PRODUCTION_CHAINS[selectedChain].steps.length - 1 && (
+                    <div className="relative h-0.5 flex-1 bg-gray-600">
+                      <svg
+                        className="absolute top-1/2 -right-5 h-4 w-4 -translate-y-1/2 transform text-gray-600"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M5 12H19M19 12L12 5M19 12L12 19"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  )}
+
+                  {/* Inputs */}
+                  <div className="flex space-x-6">
+                    {step.inputs.map((input) => (
+                      <div key={input.type} className="flex flex-col items-center">
+                        <div className="relative h-24 w-24 rounded-lg bg-gray-800 p-4">
+                          <Image
+                            src={`/images/inputs/${input.type}.png`}
+                            alt={input.type}
+                            fill
+                            className="object-contain"
+                          />
+                        </div>
+                        <div className="mt-4 text-center">
+                          <div className="text-sm">{input.type.replace(/_/g, ' ')}</div>
+                          <div className="text-sm text-gray-400">
+                            {calculatedRequirements.inputs[input.type] || 0} per day
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Column - Efficiency Analysis and Summary */}
+          <div className="space-y-8">
+            {/* Output Summary */}
+            <div className="rounded-lg bg-gray-800 p-6">
+              <h3 className="mb-4 text-xl font-medium">Production Summary</h3>
+              <div className="grid grid-cols-2 gap-8">
+                <div>
+                  <h4 className="mb-2 font-medium">Target Output</h4>
+                  <div className="text-2xl font-bold">{targetOutput} per day</div>
+                </div>
+                <div>
+                  <h4 className="mb-2 font-medium">Actual Output</h4>
+                  <div className={`text-2xl font-bold ${
+                    calculatedRequirements.actualOutput < targetOutput ? 'text-yellow-400' : 'text-green-400'
+                  }`}>
+                    {calculatedRequirements.actualOutput.toFixed(1)} per day
+                  </div>
+                  {calculatedRequirements.actualOutput < targetOutput && (
+                    <div className="mt-2 text-sm text-yellow-400">
+                      ⚠️ Current station configuration cannot meet target output
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
-          ))}
-        </div>
 
-        {/* Efficiency Analysis */}
-        <div className="mt-12 rounded-lg bg-gray-800 p-6">
-          <h3 className="mb-6 text-xl font-medium">Efficiency Analysis</h3>
-          <div className="space-y-4">
-            {calculatedRequirements.efficiencies.map((efficiency) => (
-              <div key={efficiency.station} className="rounded-lg bg-gray-700 p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-lg font-medium">{efficiency.station.replace(/_/g, ' ')}</h4>
-                    <div className="text-sm text-gray-400">
-                      Required: {efficiency.required.toFixed(2)} | Actual: {efficiency.actual}
+            {/* Efficiency Analysis */}
+            <div className="rounded-lg bg-gray-800 p-6">
+              <h3 className="mb-6 text-xl font-medium">Efficiency Analysis</h3>
+              <div className="space-y-4">
+                {calculatedRequirements.efficiencies.map((efficiency) => (
+                  <div key={efficiency.station} className="rounded-lg bg-gray-700 p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-lg font-medium">{efficiency.station.replace(/_/g, ' ')}</h4>
+                        <div className="text-sm text-gray-400">
+                          Required: {efficiency.required.toFixed(2)} | Actual: {efficiency.actual}
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => handleStationCountChange(efficiency.station, efficiency.actual - 1)}
+                            className="rounded-md bg-gray-600 px-2 py-1 hover:bg-gray-500"
+                          >
+                            -
+                          </button>
+                          <input
+                            type="number"
+                            value={efficiency.actual}
+                            onChange={(e) => handleStationCountChange(efficiency.station, parseInt(e.target.value) || 1)}
+                            className="w-16 rounded-md border border-gray-600 bg-gray-700 px-2 py-1 text-center"
+                            min="1"
+                          />
+                          <button
+                            onClick={() => handleStationCountChange(efficiency.station, efficiency.actual + 1)}
+                            className="rounded-md bg-gray-600 px-2 py-1 hover:bg-gray-500"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-medium">
+                            {efficiency.utilization.toFixed(1)}% Utilization
+                          </div>
+                          <div className="text-sm text-gray-400">
+                            {efficiency.timeWasted.toFixed(0)} min wasted per day
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => handleStationCountChange(efficiency.station, efficiency.actual - 1)}
-                        className="rounded-md bg-gray-600 px-2 py-1 hover:bg-gray-500"
-                      >
-                        -
-                      </button>
-                      <input
-                        type="number"
-                        value={efficiency.actual}
-                        onChange={(e) => handleStationCountChange(efficiency.station, parseInt(e.target.value) || 1)}
-                        className="w-16 rounded-md border border-gray-600 bg-gray-700 px-2 py-1 text-center"
-                        min="1"
+                    <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-600">
+                      <div
+                        className={`h-full rounded-full ${
+                          efficiency.underutilized ? 'bg-yellow-500' : 'bg-green-500'
+                        }`}
+                        style={{ width: `${efficiency.utilization}%` }}
                       />
-                      <button
-                        onClick={() => handleStationCountChange(efficiency.station, efficiency.actual + 1)}
-                        className="rounded-md bg-gray-600 px-2 py-1 hover:bg-gray-500"
-                      >
-                        +
-                      </button>
                     </div>
-                    <div className="text-right">
-                      <div className="text-lg font-medium">
-                        {efficiency.utilization.toFixed(1)}% Utilization
+                    {efficiency.underutilized && (
+                      <div className="mt-2 text-sm text-yellow-400">
+                        ⚠️ This station is underutilized. Consider reducing the number of stations to improve efficiency.
                       </div>
-                      <div className="text-sm text-gray-400">
-                        {efficiency.timeWasted.toFixed(0)} min wasted per day
-                      </div>
-                    </div>
+                    )}
                   </div>
-                </div>
-                <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-600">
-                  <div
-                    className={`h-full rounded-full ${
-                      efficiency.underutilized ? 'bg-yellow-500' : 'bg-green-500'
-                    }`}
-                    style={{ width: `${efficiency.utilization}%` }}
-                  />
-                </div>
-                {efficiency.underutilized && (
-                  <div className="mt-2 text-sm text-yellow-400">
-                    ⚠️ This station is underutilized. Consider reducing the number of stations to improve efficiency.
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Output Summary */}
-        <div className="mt-8 rounded-lg bg-gray-800 p-6">
-          <h3 className="mb-4 text-xl font-medium">Production Summary</h3>
-          <div className="grid grid-cols-2 gap-8">
-            <div>
-              <h4 className="mb-2 font-medium">Target Output</h4>
-              <div className="text-2xl font-bold">{targetOutput} per day</div>
-            </div>
-            <div>
-              <h4 className="mb-2 font-medium">Actual Output</h4>
-              <div className={`text-2xl font-bold ${
-                calculatedRequirements.actualOutput < targetOutput ? 'text-yellow-400' : 'text-green-400'
-              }`}>
-                {calculatedRequirements.actualOutput.toFixed(1)} per day
-              </div>
-              {calculatedRequirements.actualOutput < targetOutput && (
-                <div className="mt-2 text-sm text-yellow-400">
-                  ⚠️ Current station configuration cannot meet target output
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Summary */}
-        <div className="rounded-lg bg-gray-800 p-6">
-          <h3 className="mb-6 text-xl font-medium">Summary</h3>
-          <div className="grid grid-cols-2 gap-8">
-            <div>
-              <h4 className="mb-4 font-medium">Required Stations</h4>
-              <ul className="space-y-3">
-                {Object.entries(calculatedRequirements.stations).map(([station, count]) => (
-                  <li key={station} className="flex items-center justify-between">
-                    <span className="text-gray-300">{station.replace(/_/g, ' ')}</span>
-                    <span className="text-lg font-medium">{count}</span>
-                  </li>
                 ))}
-              </ul>
+              </div>
             </div>
-            <div>
-              <h4 className="mb-4 font-medium">Required Inputs (per day)</h4>
-              <ul className="space-y-3">
-                {Object.entries(calculatedRequirements.inputs).map(([input, quantity]) => (
-                  <li key={input} className="flex items-center justify-between">
-                    <span className="text-gray-300">{input.replace(/_/g, ' ')}</span>
-                    <span className="text-lg font-medium">{quantity}</span>
-                  </li>
-                ))}
-              </ul>
+
+            {/* Summary */}
+            <div className="rounded-lg bg-gray-800 p-6">
+              <h3 className="mb-6 text-xl font-medium">Summary</h3>
+              <div className="grid grid-cols-2 gap-8">
+                <div>
+                  <h4 className="mb-4 font-medium">Required Stations</h4>
+                  <ul className="space-y-3">
+                    {Object.entries(calculatedRequirements.stations).map(([station, count]) => (
+                      <li key={station} className="flex items-center justify-between">
+                        <span className="text-gray-300">{station.replace(/_/g, ' ')}</span>
+                        <span className="text-lg font-medium">{count}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="mb-4 font-medium">Required Inputs (per day)</h4>
+                  <ul className="space-y-3">
+                    {Object.entries(calculatedRequirements.inputs).map(([input, quantity]) => (
+                      <li key={input} className="flex items-center justify-between">
+                        <span className="text-gray-300">{input.replace(/_/g, ' ')}</span>
+                        <span className="text-lg font-medium">{quantity}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
           </div>
         </div>
