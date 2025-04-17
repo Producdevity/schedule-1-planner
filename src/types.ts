@@ -12,7 +12,7 @@ export interface GridItem extends Placeable {
   type: string
 }
 
-type ItemType =
+export type ItemType =
   | 'bed'
   | 'grow_tent'
   | 'packaging_station'
@@ -67,6 +67,13 @@ type ItemType =
   | 'iodine'
   | 'addy'
   | 'horse_semen'
+  | 'og_kush_seed'
+  | 'sour_diesel_seed'
+  | 'green_crack_seed'
+  | 'granddaddy_purple_seed'
+  | 'coca_seed'
+
+export type ItemBaseCategory = 'production' | 'packaging' | 'ingredients' | 'seeds'
 
 export type ItemCategory =
   | 'agriculture'
@@ -78,10 +85,11 @@ export type ItemCategory =
   | 'ingredients'
   | 'lights'
   | 'tools'
+  | 'weed_seeds'
+  | 'coca_seeds'
 
 export interface Item {
   type: ItemType
   category: ItemCategory
   price: number
-  size: [number, number]
 }

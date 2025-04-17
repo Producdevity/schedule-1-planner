@@ -1,7 +1,7 @@
 'use client'
 
-import Sidebar from '@/components/Sidebar/Sidebar'
-import SnapToGrid from '@/components/SnapToGrid'
+import Sidebar from '@/components/Planner/Sidebar/Sidebar'
+import SnapToGrid from '@/components/Planner/SnapToGrid'
 
 function App() {
   return (

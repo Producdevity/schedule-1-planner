@@ -1,6 +1,10 @@
 import { type Item } from '@/types'
 
-const placeableItems: Item[] = [
+interface PlaceableItem extends Item {
+  size: [number, number]
+}
+
+const placeableItems: PlaceableItem[] = [
   { type: 'bed', category: 'furniture', price: 150, size: [3, 5] },
   { type: 'coffee_table', category: 'furniture', price: 120, size: [2, 4] },
   { type: 'wooden_square_table', category: 'furniture', price: 50, size: [2, 2] },

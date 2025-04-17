@@ -11,7 +11,6 @@ function Sidebar() {
             <h3>{item.type}</h3>
             <p>Category: {item.category}</p>
             <p>Price: ${item.price}</p>
-            <p>Size: {item.size.join('x')}</p>
           </div>
         ))}
       </div>

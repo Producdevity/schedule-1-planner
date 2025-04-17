@@ -1,6 +1,6 @@
 'use client'
-import DraggableBox from '@/components/DraggableBox'
-import DragMonitor from '@/components/DragMonitor'
+import DraggableBox from '@/components/Planner/DraggableBox'
+import DragMonitor from '@/components/Planner/DragMonitor'
 import { type GridItem } from '@/types'
 import React, { useCallback, useMemo, useState } from 'react'
 import {

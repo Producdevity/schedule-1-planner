@@ -1,12 +1,14 @@
-import Link from "next/link"
+import Link from 'next/link'
+import Planner from '@/components/Planner/Planner'
 
-function Home() {
+function PlannerPage() {
   return (
     <div className="container">
       <Link href="/calculator">Calculator</Link>
       <Link href="/planner">Planner</Link>
+      <Planner />
     </div>
   )
 }
 
-export default Home
+export default PlannerPage
